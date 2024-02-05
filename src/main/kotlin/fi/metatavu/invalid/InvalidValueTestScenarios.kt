@@ -5,7 +5,7 @@ import io.restassured.module.kotlin.extensions.Given
 import io.restassured.module.kotlin.extensions.When
 import org.junit.jupiter.api.Assertions.*
 import org.slf4j.LoggerFactory
-
+import io.restassured.http.ContentType
 
 /**
  * Scenarios for invalid value test scenario builder
