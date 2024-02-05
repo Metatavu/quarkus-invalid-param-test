@@ -20,7 +20,8 @@ class InvalidValueTestScenario(
     val body: String?,
     val queryParams: Map<String, Any?>,
     val pathParams: Map<String, Any?>,
-    val expectedStatus: Int
+    val expectedStatus: Int,
+    val basePath: String
 ) {
 
 }
