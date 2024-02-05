@@ -12,6 +12,7 @@ import io.restassured.http.Method
  */
 class InvalidValueTestScenarioBuilder(
     private val path: String,
+    private val basePath: String,
     private val method: Method,
     private val token: String? = null,
     private val body: String? = null
@@ -90,7 +91,8 @@ class InvalidValueTestScenarioBuilder(
                         body = newBody,
                         queryParams = queryParams,
                         pathParams = pathParams,
-                        expectedStatus = parameter.expectedStatus
+                        expectedStatus = parameter.expectedStatus,
+                        basePath = basePath
                     )
                 )
             }
