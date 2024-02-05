@@ -21,13 +21,18 @@ class InvalidValueTestScenarios(private val scenarios: MutableList<InvalidValueT
         logger.debug("Executing test ${scenarios.size} scenarios")
 
         scenarios.forEach { scenario ->
-            logger.debug("Executing test scenario (${scenario.method}) ${scenario.path} with query: ${scenario.queryParams}, path: ${scenario.pathParams}" )
+            logger.debug("Executing test scenario ({}) {} with query: {}, path: {}, body: {}", scenario.method, scenario.path, scenario.queryParams, scenario.pathParams, scenario.body)
 
             Given {
                 baseUri(scenario.basePath)
             } When {
                 queryParams(scenario.queryParams)
                 pathParams(scenario.pathParams)
+                auth().preemptive().oauth2(scenario.token)
+                if (scenario.body != null) {
+                    body(scenario.body)
+                    contentType(ContentType.JSON)
+                }
                 request(scenario.method, scenario.path)
             } Extract {
                 val statusCode = statusCode()
