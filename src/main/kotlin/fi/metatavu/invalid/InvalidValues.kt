@@ -6,7 +6,7 @@ import fi.metatavu.invalid.providers.SimpleInvalidValueProvider
 /**
  * Class containing commonly used invalid values
  */
-class InvalidValues {
+open class InvalidValues {
 
     companion object {
         val NULL: Collection<InvalidValueProvider> = listOf(null).map { SimpleInvalidValueProvider(it) }
