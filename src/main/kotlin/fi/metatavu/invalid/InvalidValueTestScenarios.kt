@@ -28,7 +28,12 @@ class InvalidValueTestScenarios(private val scenarios: MutableList<InvalidValueT
             } When {
                 queryParams(scenario.queryParams)
                 pathParams(scenario.pathParams)
-                auth().preemptive().oauth2(scenario.token)
+                if (scenario.token != null) {
+                    auth().preemptive().oauth2(scenario.token)
+                }
+                if (scenario.header != null) {
+                    header(scenario.header.first, scenario.header.second)
+                }
                 if (scenario.body != null) {
                     body(scenario.body)
                     contentType(ContentType.JSON)

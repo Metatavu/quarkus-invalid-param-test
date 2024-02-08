@@ -8,6 +8,7 @@ import io.restassured.http.Method
  * @param path request path
  * @param method request method
  * @param token token
+ * @param header header
  * @param body request body
  * @param queryParams queryParams
  * @param pathParams pathParams
@@ -16,7 +17,8 @@ import io.restassured.http.Method
 class InvalidValueTestScenario(
     val path: String,
     val method: Method,
-    val token: String?,
+    val token: String? = null,
+    val header: Pair<String, String>? = null,
     val body: String?,
     val queryParams: Map<String, Any?>,
     val pathParams: Map<String, Any?>,

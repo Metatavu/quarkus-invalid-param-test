@@ -14,6 +14,7 @@ class InvalidValueTestScenarioBuilder(
     private val path: String,
     private val basePath: String,
     private val method: Method,
+    private val header: Pair<String, String>? = null,
     private val token: String? = null,
     private val body: String? = null
 ) {
@@ -88,6 +89,7 @@ class InvalidValueTestScenarioBuilder(
                         path = path,
                         method = method,
                         token = token,
+                        header = header,
                         body = newBody,
                         queryParams = queryParams,
                         pathParams = pathParams,
