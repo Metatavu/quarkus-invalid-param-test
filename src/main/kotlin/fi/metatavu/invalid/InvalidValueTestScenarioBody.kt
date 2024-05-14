@@ -9,6 +9,5 @@ package fi.metatavu.invalid
  */
 class InvalidValueTestScenarioBody(
     values: Collection<InvalidValueProvider>,
-    default: Any? = null,
     expectedStatus: Int
-) : InvalidValueTestScenarioBase("", values, emptyList(), default, expectedStatus)
+) : InvalidValueTestScenarioBase("", values, emptyList(), null, expectedStatus)
