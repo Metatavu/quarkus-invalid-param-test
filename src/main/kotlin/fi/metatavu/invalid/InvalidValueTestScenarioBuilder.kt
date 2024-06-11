@@ -7,8 +7,17 @@ import io.restassured.http.Method
  *
  * @param path path
  * @param method request method
+ * @param token token if applicable
+ * @param body body if needed
  */
-class InvalidValueTestScenarioBuilder(private val basePath: String, private val path: String, private val method: Method) {
+class InvalidValueTestScenarioBuilder(
+    private val path: String,
+    private val basePath: String,
+    private val method: Method,
+    private val header: Pair<String, String>? = null,
+    private val token: String? = null,
+    private val body: String? = null
+) {
 
     private val parameters: MutableList<InvalidValueTestScenarioBase> = mutableListOf()
 
@@ -35,6 +44,17 @@ class InvalidValueTestScenarioBuilder(private val basePath: String, private val 
     }
 
     /**
+     * Adds a body parameter to the scenario
+     *
+     * @param body body
+     * @return builder instance
+     */
+    fun body(body: InvalidValueTestScenarioBody): InvalidValueTestScenarioBuilder {
+        parameters.add(body)
+        return this
+    }
+
+    /**
      * Builds test scenarios
      *
      * @return test scenarios
@@ -45,24 +65,38 @@ class InvalidValueTestScenarioBuilder(private val basePath: String, private val 
         parameters.forEach { parameter ->
             val parameterValues = parameter.values.map(InvalidValueProvider::value)
 
-            parameterValues.minus(parameter.except).forEach { parameterValue ->
+            parameterValues.minus(parameter.except.toSet()).forEach { parameterValue ->
                 val queryParams = buildDefaultQueryParams().toMutableMap()
                 val pathParams = buildDefaultPathParams().toMutableMap()
+                var newBody = body
+                when (parameter) {
+                    is InvalidValueTestScenarioQuery -> {
+                        queryParams[parameter.name] = parameterValue
+                    }
 
-                if (parameter is InvalidValueTestScenarioQuery) {
-                    queryParams[parameter.name] = parameterValue
-                } else if (parameter is InvalidValueTestScenarioPath) {
-                    pathParams[parameter.name] = parameterValue
+                    is InvalidValueTestScenarioPath -> {
+                        pathParams[parameter.name] = parameterValue
+                    }
+
+                    is InvalidValueTestScenarioBody -> {
+                        // If there is body parameter, it should be used instead of the default provided one
+                        newBody = parameterValue.toString()
+                    }
                 }
 
-                scenarios.add(InvalidValueTestScenario(
-                    basePath = basePath,
-                    path = path,
-                    method = method,
-                    queryParams = queryParams,
-                    pathParams = pathParams,
-                    expectedStatus = parameter.expectedStatus
-                ))
+                scenarios.add(
+                    InvalidValueTestScenario(
+                        path = path,
+                        method = method,
+                        token = token,
+                        header = header,
+                        body = newBody,
+                        queryParams = queryParams,
+                        pathParams = pathParams,
+                        expectedStatus = parameter.expectedStatus,
+                        basePath = basePath
+                    )
+                )
             }
         }
 
@@ -75,10 +109,9 @@ class InvalidValueTestScenarioBuilder(private val basePath: String, private val 
      * @return default query parameter map
      */
     private fun buildDefaultQueryParams(): Map<String, Any?> {
-        return parameters.filterIsInstance<InvalidValueTestScenarioQuery>()
-            .map {
-                it.name to it.default
-            }.toMap()
+        return parameters.filterIsInstance<InvalidValueTestScenarioQuery>().associate {
+            it.name to it.default
+        }
     }
 
     /**
@@ -87,10 +120,9 @@ class InvalidValueTestScenarioBuilder(private val basePath: String, private val 
      * @return default path parameter map
      */
     private fun buildDefaultPathParams(): Map<String, Any?> {
-        return parameters.filterIsInstance<InvalidValueTestScenarioPath>()
-            .map {
-                it.name to it.default
-            }.toMap()
+        return parameters.filterIsInstance<InvalidValueTestScenarioPath>().associate {
+            it.name to it.default
+        }
     }
 
 }
