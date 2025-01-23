@@ -20,6 +20,7 @@ class InvalidValueTestScenarioBuilder(
 ) {
 
     private val parameters: MutableList<InvalidValueTestScenarioBase> = mutableListOf()
+    private var staticBody: String? = null
 
     /**
      * Adds a query parameter to the scenario
@@ -51,6 +52,17 @@ class InvalidValueTestScenarioBuilder(
      */
     fun body(body: InvalidValueTestScenarioBody): InvalidValueTestScenarioBuilder {
         parameters.add(body)
+        return this
+    }
+
+    /**
+     * Adds a static body to the scenario
+     *
+     * @param body body
+     * @return builder instance
+     */
+    fun staticBody(body: String): InvalidValueTestScenarioBuilder {
+        staticBody = body
         return this
     }
 
@@ -90,7 +102,7 @@ class InvalidValueTestScenarioBuilder(
                         method = method,
                         token = token,
                         header = header,
-                        body = newBody,
+                        body = newBody ?: staticBody,
                         queryParams = queryParams,
                         pathParams = pathParams,
                         expectedStatus = parameter.expectedStatus,
